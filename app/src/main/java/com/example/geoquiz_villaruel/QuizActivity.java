@@ -119,9 +119,13 @@ public class QuizActivity extends AppCompatActivity {
 //                        Toast.makeText(QuizActivity.this, "Please re-answer the questions you cheated on", Toast.LENGTH_LONG).show();
 //                    }
                 if (mCurrentIndex == numOfQuestions - 1) {
-                        Toast.makeText(QuizActivity.this, "Score: " + (correct/numOfQuestions)*100 + "%", Toast.LENGTH_LONG).show();
-//                    }
-
+                    // Check if all questions were answered
+                    if (!allQuestionsAnsweredWithoutCheating()) {
+                        Toast.makeText(QuizActivity.this, "Please answer all questions", Toast.LENGTH_SHORT).show();
+                    } else {
+                        double score = (correct / numOfQuestions) * 100;
+                        Toast.makeText(QuizActivity.this, "Score: " + score + "%", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     mIsCheater = false;
                     mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
@@ -161,6 +165,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_CODE_CHEAT) {
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            mRemainingCheatTokens = CheatActivity.getRemainingTokens(data);
 
             // If user cheated, mark this question as cheated and disable buttons
             if (mIsCheater) {
@@ -188,11 +193,10 @@ public class QuizActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId = 0;
 
-        if (mIsCheater) {
-            messageResId = R.string.judgment_toast;
-
+        if (mRemainingCheatTokens == -1 && mIsCheater) {
+            messageResId = R.string.judgement_toast;
         } else {
-            if (userPressedTrue == answerIsTrue && !userPressedTrue == !answerIsTrue) {
+            if (userPressedTrue == answerIsTrue && !userPressedTrue == !answerIsTrue && mRemainingCheatTokens != -1) {
                 messageResId = R.string.correct_toast;
                 correct++;
             } else {
@@ -209,23 +213,9 @@ public class QuizActivity extends AppCompatActivity {
         falseButton.setEnabled(false);
     }
 
-//    private int findNextCheatedQuestion() {
-//        for (int i = 0; i < mQuestionBank.length; i++) {
-//            if (mCheatedQuestions[i]) {
-//
-//                // Reset the question so it can be answered again
-//                mQuestionBank[i].setAnswered(false);
-//                mCheatedQuestions[i] = false; // Reset the cheated state
-//                mIsCheater = false;
-//                return i;
-//            }
-//        }
-//        return -1; // No cheated questions found
-//    }
-
     private boolean allQuestionsAnsweredWithoutCheating() {
         for (int i = 0; i < mQuestionBank.length; i++) {
-            if (!mQuestionBank[i].isAnswered() || mCheatedQuestions[i]) {
+            if (!mQuestionBank[i].isAnswered()) {
                 return false;
             }
         }

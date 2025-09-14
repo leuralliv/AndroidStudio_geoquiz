@@ -27,9 +27,6 @@ public class Question {
     public void setAnswerTrue(boolean answerTrue) {
         mAnswerTrue = answerTrue;
     }
-    public boolean isAnswered() {
-        return isAnswered;
-    }
-
+    public boolean isAnswered() { return isAnswered; }
     public void setAnswered(boolean answered) { isAnswered = answered; }
 }

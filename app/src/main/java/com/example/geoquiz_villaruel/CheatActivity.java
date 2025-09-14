@@ -35,6 +35,7 @@ public class CheatActivity extends AppCompatActivity {
     public static Intent newIntent(Context packageContext, boolean answerIsTrue, int mRemainingCheatTokens) {
         Intent intent = new Intent(packageContext, CheatActivity.class);
         intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+        intent.putExtra(EXTRA_REMAINING_TOKENS, mRemainingCheatTokens);
         return intent;
     }
 
@@ -115,7 +116,7 @@ public class CheatActivity extends AppCompatActivity {
             mRemainingTokens--; // use one token
             updateTokensText();
         }
-        if (mRemainingTokens <= 0) {
+        if (mRemainingTokens <= -1) {
             mShowAnswerButton.setEnabled(false);
         }
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
