@@ -52,7 +52,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEATER, false);
+            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEATER, true);
             correct = savedInstanceState.getDouble(KEY_CORRECT_SCORE, 0);
 
             // Restore answered states for each question
@@ -63,12 +63,11 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
 
-            // Restore cheated questions
+//            // Restore cheated questions
             boolean[] cheatedStates = savedInstanceState.getBooleanArray(KEY_CHEATED_QUESTIONS);
             if (cheatedStates != null) {
                 mCheatedQuestions = cheatedStates;
             }
-
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -111,13 +110,6 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int numOfQuestions = mQuestionBank.length;
-//                int nextCheatedQuestion = findNextCheatedQuestion();
-
-//                if (mCurrentIndex == numOfQuestions - 1) {
-//                    if (nextCheatedQuestion != -1) {
-//                        mCurrentIndex = nextCheatedQuestion;
-//                        Toast.makeText(QuizActivity.this, "Please re-answer the questions you cheated on", Toast.LENGTH_LONG).show();
-//                    }
                 if (mCurrentIndex == numOfQuestions - 1) {
                     // Check if all questions were answered
                     if (!allQuestionsAnsweredWithoutCheating()) {
@@ -167,7 +159,7 @@ public class QuizActivity extends AppCompatActivity {
             mIsCheater = CheatActivity.wasAnswerShown(data);
             mRemainingCheatTokens = CheatActivity.getRemainingTokens(data);
 
-            // If user cheated, mark this question as cheated and disable buttons
+//             If user cheated, mark this question as cheated and disable buttons
             if (mIsCheater) {
                 mCheatedQuestions[mCurrentIndex] = true;
             }
@@ -193,17 +185,18 @@ public class QuizActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId = 0;
 
-        if (mRemainingCheatTokens == -1 && mIsCheater) {
+        if (mIsCheater) {
             messageResId = R.string.judgement_toast;
-        } else {
-            if (userPressedTrue == answerIsTrue && !userPressedTrue == !answerIsTrue && mRemainingCheatTokens != -1) {
+        }
+        else {
+            if (userPressedTrue == answerIsTrue && !userPressedTrue == !answerIsTrue) {
                 messageResId = R.string.correct_toast;
                 correct++;
             } else {
                 messageResId = R.string.incorrect_toast;
             }
             // If answered without cheating, remove from cheated list
-            mCheatedQuestions[mCurrentIndex] = false;
+//            mCheatedQuestions[mCurrentIndex] = false;
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
@@ -256,7 +249,7 @@ public class QuizActivity extends AppCompatActivity {
         savedInstanceState.putBooleanArray(KEY_ANSWERED_QUESTIONS, answeredStates);
 
         // Save cheated questions
-        savedInstanceState.putBooleanArray(KEY_CHEATED_QUESTIONS, mCheatedQuestions);
+//        savedInstanceState.putBooleanArray(KEY_CHEATED_QUESTIONS, mCheatedQuestions);
     }
 
     @Override
